@@ -2,26 +2,40 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const FoodSchema = new Schema({
-  title: {
+  name: {
     type: String,
     required: true
   },
-  is_active: {
+  total_order: {
+    type: Number,
+    default: 0
+  },
+  is_available: {
     type: Boolean,
     default: true
   },
   likes: {
     type: Number
   },
-  category: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category'
-  },
   img_uri: {
     type: String
   },
   price: {
-    type: Number,
+    text: {
+      type: String,
+      required: true
+    },
+    unit: {
+      type: String,
+      required: true
+    },
+    value: {
+      type: Number,
+      required: true
+    }
+  },
+  restaurant: {
+    type: Schema.Types.ObjectId,
     required: true
   }
 }, { timestamps: true })
