@@ -1,5 +1,5 @@
 import Restaurant from '../../models/restaurant.model';
-import Food from '../../models/food.model';
+import User from '../../models/user.model';
 
 export default {
   Query: {
@@ -13,22 +13,30 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    restaurantByMerchant: async (_, { merchantId }) => {
+      try {
+
+      } catch (error) {
+        throw error
+      }
     }
   },
   Mutation: {
-    createRestaurant: async (_, { merchantInput }) => {
+    createRestaurant: async (_, { restaurantInput }) => {
       try {
-        const newMerchant = new Restaurant({
-          name: merchantInput.name,
-          address: merchantInput.address,
-          menu: merchantInput.menu
+        const newRestaurant = new Restaurant({
+          ...restaurantInput
         })
-
-        await newMerchant.save();
+        await User.findOneAndUpdate(
+          { _id: restaurantInput.merchant },
+          { $push: { created_restaurants: newRestaurant } },
+        )
+        await newRestaurant.save();
 
         return {
-          ...newMerchant._doc,
-          _id: newMerchant.id
+          ...newRestaurant._doc,
+          _id: newRestaurant.id
         }
       } catch (error) {
         throw error

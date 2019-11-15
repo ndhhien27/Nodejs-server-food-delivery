@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from '../../models/user.model';
+import Restaurant from '../../models/restaurant.model'
 
 export default {
   Query: {
@@ -53,6 +54,11 @@ export default {
       } catch (error) {
         throw error
       }
+    }
+  },
+  User: {
+    createdRestaurants: async ({ _id }) => {
+      return await Restaurant.find({ merchant: _id })
     }
   }
 }

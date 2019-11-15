@@ -6,13 +6,33 @@ const restaurantSchema = new Schema({
     type: Boolean,
     default: true
   },
+  cuisines: [
+    {
+      type: String,
+      required: true
+    }
+  ],
   name: {
     type: String,
     required: true
   },
+  merchant: {
+    type: Schema.Types.ObjectId,
+    ref: 'User'
+  },
   address: {
-    type: String,
-    required: true
+    address_1: {
+      type: String,
+      required: true
+    },
+    district: {
+      type: String,
+      required: true
+    },
+    city: {
+      type: String,
+      required: true
+    }
   },
   // position: {
   //   latitute: {

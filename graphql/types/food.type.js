@@ -10,7 +10,7 @@ export default `
     name: String!
     img_uri: String!
     total_order: Int!
-    restaurant: ID!
+    restaurant: Restaurant!
     is_available: Boolean!
     createdAt: String!
     updatedAt: String!

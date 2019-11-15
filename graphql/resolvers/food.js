@@ -23,7 +23,10 @@ export default {
       try {
         const newFood = new Food({
           name: foodInput.name,
-          price: foodInput.price,
+          price: {
+            ...foodInput.price,
+            value: +foodInput.price.value
+          },
           restaurant: foodInput.restaurant
         })
         await newFood.save();
@@ -40,6 +43,11 @@ export default {
       } catch (error) {
         throw error
       }
+    }
+  },
+  Food: {
+    restaurant: async ({ restaurant }) => {
+      return await Restaurant.findById(restaurant);
     }
   }
 }

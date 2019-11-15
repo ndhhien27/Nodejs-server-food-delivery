@@ -5,15 +5,23 @@ export default `
     foods: [Food!]
   }
 
+  type Address{
+    address_1: String!
+    district: String!
+    city: String!
+  }
+
   type Restaurant{
     _id: ID!
+    cuisines: [String!]!
     name: String!
-    address: String!
+    address: Address!
     menu_info: [DishTypeName!]
   }
 
   type Query{
     restaurants: [Restaurant!]!
+    restaurantByMerchant(merchantId: ID!): [Restaurant!]
   }
 
   type Mutation{
@@ -36,9 +44,17 @@ export default `
     name: String!
     foods: FoodInput
   }
+  
+  input AddressInput{
+    address_1: String!
+    district: String!
+    city: String!
+  }
 
   input RestaurantInput{
     name: String!
-    address: String!
+    address: AddressInput!
+    cuisines: [String!]!
+    merchant: ID!
   }
 `

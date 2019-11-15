@@ -29,6 +29,12 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Restaurant'
     }
+  ],
+  created_restaurants: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Restaurant'
+    }
   ]
 })
 

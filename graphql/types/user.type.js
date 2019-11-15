@@ -9,15 +9,24 @@ export default `
     likes: [Food!]!
     orders: [Order!]
     bookmarks: [Restaurant!]
+    createdRestaurants: [Restaurant!]
   }
 
   type Query{
     users: [User!]!
   }
 
+  type AuthData{
+    userId: ID!
+    fName: String!
+    lName: String!
+    authToken: String!
+  }
+
   type Mutation{
     createUser(userInput: UserInput!): User!
     bookmark(restaurantId: ID!, userId: ID!): User!
+    login(email: String!, pass: String!): AuthData!
   }
 
   input UserInput{
