@@ -1,45 +1,50 @@
-import Food from '../../models/food.model'
-import Restaurant from '../../models/restaurant.model'
+import Food from '../../models/food.model';
+import Restaurant from '../../models/restaurant.model';
+import DishType from '../../models/dishType.model';
 
 export default {
-  Mutation: {
-    // createFood: async (_, { food }) => {
-    //   const newFood = new Food({
-    //     title: food.title,
-    //     category: food.category,
-    //     price: +food.price
-    //   })
-    //   try {
-    //     await newFood.save();
-    //     return {
-    //       ...newFood._doc,
-    //       _id: newFood.id
-    //     }
-    //   } catch (err) {
-    //     throw err
-    //   }
-    // }
-    createFood: async (_, { foodInput }) => {
+  Query: {
+    foodsByRestaurant: async (_, { restaurantId }) => {
       try {
-        const newFood = new Food({
-          name: foodInput.name,
-          price: {
-            ...foodInput.price,
-            value: +foodInput.price.value
-          },
-          restaurant: foodInput.restaurant
-        })
-        await newFood.save();
-        await Restaurant.findOneAndUpdate({ _id: foodInput.restaurant, "menu_info.name": foodInput.dishType }, {
-          $push: {
-            "menu_info.$.foods": newFood
+        const foods = await Food.find({ restaurant: restaurantId });
+        return foods.map(item => {
+          return {
+            ...item._doc,
+            _id: item.id
           }
         })
-
-        return {
-          ...newFood._doc,
-          _id: newFood.id
-        }
+      } catch (error) {
+        throw error
+      }
+    }
+  },
+  Mutation: {
+    createFood: async (_, { foodInput }) => {
+      try {
+        const newFoods = foodInput.detail.map(item => {
+          return {
+            restaurant: foodInput.restaurant,
+            name: item.name,
+            price: {
+              ...item.price,
+              value: +item.price.value
+            },
+            dish_type: foodInput.dishType
+          }
+        })
+        // await newFood.save();
+        const foodsSaved = await Food.create(newFoods);
+        await DishType.findOneAndUpdate({ name: foodInput.dishType }, {
+          $push: {
+            "foods": { $each: foodsSaved }
+          }
+        });
+        return foodsSaved.map(item => {
+          return {
+            ...item._doc,
+            _id: item.id
+          }
+        });
       } catch (error) {
         throw error
       }
@@ -48,6 +53,9 @@ export default {
   Food: {
     restaurant: async ({ restaurant }) => {
       return await Restaurant.findById(restaurant);
+    },
+    dish_type: async ({ dish_type }) => {
+      return await DishType.findById(dish_type);
     }
   }
 }

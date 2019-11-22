@@ -14,25 +14,15 @@ const restaurantSchema = new Schema({
   ],
   name: {
     type: String,
-    required: true
+    required: true,
   },
   merchant: {
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
   address: {
-    address_1: {
-      type: String,
-      required: true
-    },
-    district: {
-      type: String,
-      required: true
-    },
-    city: {
-      type: String,
-      required: true
-    }
+    type: String,
+    required: true
   },
   // position: {
   //   latitute: {
@@ -46,16 +36,8 @@ const restaurantSchema = new Schema({
   // },
   menu_info: [
     {
-      name: {
-        type: String,
-        required: true
-      },
-      foods: [
-        {
-          type: Schema.Types.ObjectId,
-          ref: 'Food'
-        }
-      ]
+      type: Schema.Types.ObjectId,
+      ref: 'DishType'
     }
   ],
   rating: {
@@ -73,5 +55,10 @@ const restaurantSchema = new Schema({
     default: 0
   }
 }, { timestamps: true })
+
+restaurantSchema.index({
+  address: 'text',
+  name: 'text'
+});
 
 export default mongoose.model('Restaurant', restaurantSchema)

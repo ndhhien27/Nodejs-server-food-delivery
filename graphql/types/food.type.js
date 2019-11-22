@@ -11,14 +11,19 @@ export default `
     img_uri: String!
     total_order: Int!
     restaurant: Restaurant!
+    dish_type: DishType!
     is_available: Boolean!
     createdAt: String!
     updatedAt: String!
     price: Price!
   }
 
+  type Query{
+    foodsByRestaurant(restaurantId: ID!): [Food!]!
+  }
+
   type Mutation{
-    createFood(foodInput: FoodInput!): Food!
+    createFood(foodInput: FoodInput!): [Food!]!
   }
 
   input PriceInput{
@@ -27,10 +32,14 @@ export default `
     value: Float!
   }
 
-  input FoodInput{
-    restaurant: ID!
+  input DetailInput{
     name: String!
     price: PriceInput!
-    dishType: String!
+  }
+
+  input FoodInput{
+    restaurant: ID!
+    detail: [DetailInput!]!
+    dishType: ID!
   }
 `

@@ -36,8 +36,16 @@ const FoodSchema = new Schema({
   },
   restaurant: {
     type: Schema.Types.ObjectId,
-    required: true
+    ref: 'Restaurant'
+  },
+  dish_type: {
+    type: Schema.Types.ObjectId,
+    ref: 'DishType'
   }
 }, { timestamps: true })
+
+FoodSchema.index({
+  name:'text'
+})
 
 module.exports = mongoose.model('Food', FoodSchema)
