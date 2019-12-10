@@ -73,6 +73,11 @@ export default {
           },
           { $sort: { avgScore: -1 } },
         ]);
+        // console.log(food.map(item => {
+        //   return {
+        //     ...item
+        //   }
+        // }))
         const searchByFood = food.map(item => {
           return {
             ...item._id['0'],

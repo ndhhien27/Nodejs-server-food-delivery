@@ -17,12 +17,15 @@ export default {
   Mutation: {
     createDishType: async (_, { dishTypeInput }) => {
       try {
+        const restaurant = await Restaurant.findById(dishTypeInput.restaurant);
+        if (!restaurant) throw new Error('Restaurant does not exist');
+        const dishType = await DishType.findOne({ name: dishTypeInput.name });
+        if (dishType) throw new Error('Dish type already exists');
         const newDishType = new DishType({
           name: dishTypeInput.name,
           restaurant: dishTypeInput.restaurant
         });
         await newDishType.save();
-        const restaurant = await Restaurant.findById(newDishType.restaurant)
         restaurant.menu_info.push(newDishType)
         await restaurant.save();
         return {
@@ -36,7 +39,7 @@ export default {
   },
   DishType: {
     foods: async ({ _id }) => {
-      return await Food.find({ dish_type: _id });
+      return await Food.find({ dishType: _id });
     }
   }
 }

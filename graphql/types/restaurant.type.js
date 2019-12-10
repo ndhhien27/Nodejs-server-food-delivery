@@ -3,7 +3,7 @@ export default `
     _id: ID!
     cuisines: [String!]!
     name: String!
-    address: String!
+    position: Position!
     menu_info: [DishType!]
   }
 
@@ -24,12 +24,6 @@ export default `
     price: PriceInput!
   }
 
-  input PriceInput{
-    text: String!
-    unit: String!
-    value: Float!
-  }
-
   input DishTypeNameInput{
     name: String!
     foods: FoodInput
@@ -37,7 +31,7 @@ export default `
 
   input RestaurantInput{
     name: String!
-    address: String!
+    position: PositionInput!
     cuisines: [String!]!
     merchant: ID!
   }

@@ -10,9 +10,9 @@ const FoodSchema = new Schema({
     type: Number,
     default: 0
   },
-  is_available: {
+  is_active: {
     type: Boolean,
-    default: true
+    default: false
   },
   likes: {
     type: Number
@@ -21,13 +21,10 @@ const FoodSchema = new Schema({
     type: String
   },
   price: {
-    text: {
-      type: String,
-      required: true
-    },
     unit: {
       type: String,
-      required: true
+      required: true,
+      enum: ['đ','USD']
     },
     value: {
       type: Number,
@@ -38,7 +35,7 @@ const FoodSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Restaurant'
   },
-  dish_type: {
+  dishType: {
     type: Schema.Types.ObjectId,
     ref: 'DishType'
   }

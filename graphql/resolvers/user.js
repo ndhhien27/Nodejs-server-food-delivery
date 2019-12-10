@@ -1,6 +1,9 @@
 import bcrypt from 'bcryptjs';
 import User from '../../models/user.model';
 import Restaurant from '../../models/restaurant.model'
+import Device from '../../models/device.model';
+import jwt from 'jsonwebtoken';
+import userValidate from '../../validate/user';
 
 export default {
   Query: {
@@ -14,6 +17,17 @@ export default {
       } catch (err) {
         console.log(err);
         throw err
+      }
+    },
+    userById: async (_, { userId }) => {
+      try {
+        const user = await User.findById(userId)
+        return {
+          ...user._doc,
+          _id: user.id
+        }
+      } catch (error) {
+        throw error
       }
     }
   },
@@ -54,7 +68,56 @@ export default {
       } catch (error) {
         throw error
       }
-    }
+    },
+    login: async (_, { loginInput }) => {
+      const { email, password, fcmToken, uniqueId } = loginInput;
+      console.log(userValidate.loginValidate({ email, password }).error);
+      console.log(email, password);
+      const user = await User.findOne({ email });
+      if (!user) throw new Error("User does not exist");
+      const isEqual = await bcrypt.compare(password, user.password);
+      if (!isEqual) throw new Error("Wrong password");
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, {
+        expiresIn: 60
+      })
+      await Device.findOneAndUpdate(
+        { uniqueId },
+        { user, fcmToken },
+        { new: true, upsert: true }
+      );
+      return {
+        userId: user.id,
+        fName: user.fName,
+        lName: user.lName,
+        authToken: token,
+        tokenExpiration: 1
+      }
+    },
+    updateUser: async (_, { userId, updateValue }) => {
+      const user = await User.findByIdAndUpdate(userId, { $set: { ...updateValue } }, { new: true });
+      return {
+        ...user._doc,
+        _id: user.id
+      }
+    },
+    merchantLogin: async (_, { email, password }) => {
+      console.log(userValidate.loginValidate({ email, password }).error);
+      console.log(email, password);
+      const user = await User.findOne({ email });
+      if (!user) throw new Error("User does not exist");
+      const isEqual = await bcrypt.compare(password, user.password);
+      if (!isEqual) throw new Error("Wrong password");
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, {
+        expiresIn: 60
+      })
+      return {
+        userId: user.id,
+        fName: user.fName,
+        lName: user.lName,
+        authToken: token,
+        tokenExpiration: 1
+      }
+    },
   },
   User: {
     createdRestaurants: async ({ _id }) => {

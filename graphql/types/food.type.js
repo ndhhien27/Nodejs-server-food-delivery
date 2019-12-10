@@ -1,6 +1,5 @@
 export default `
   type Price{
-    text: String!
     unit: String!
     value: Float!
   }
@@ -11,8 +10,8 @@ export default `
     img_uri: String!
     total_order: Int!
     restaurant: Restaurant!
-    dish_type: DishType!
-    is_available: Boolean!
+    dishType: DishType!
+    is_active: Boolean!
     createdAt: String!
     updatedAt: String!
     price: Price!
@@ -23,23 +22,27 @@ export default `
   }
 
   type Mutation{
-    createFood(foodInput: FoodInput!): [Food!]!
+    createFood(foodInput: FoodInput!): Food!
+    deleteFood(foodId: ID!): Food!
+    updateFood(foodId: ID!, updateValue: UpdateInput!): Food!
   }
 
   input PriceInput{
-    text: String!
     unit: String!
     value: Float!
   }
 
-  input DetailInput{
-    name: String!
-    price: PriceInput!
+
+  input UpdateInput{
+    name: String
+    price: PriceInput
+    dishType: ID
   }
 
   input FoodInput{
     restaurant: ID!
-    detail: [DetailInput!]!
+    name: String!
+    price: PriceInput!
     dishType: ID!
   }
 `

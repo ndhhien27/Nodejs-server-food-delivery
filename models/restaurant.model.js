@@ -20,20 +20,20 @@ const restaurantSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  address: {
-    type: String,
-    required: true
+  position: {
+    address: {
+      type: String,
+      required: true
+    },
+    lat: {
+      type: Number,
+      required: true
+    },
+    long: {
+      type: Number,
+      required: true
+    }
   },
-  // position: {
-  //   latitute: {
-  //     type: Number,
-  //     required: true
-  //   },
-  //   longtitute: {
-  //     type: Number,
-  //     required: true
-  //   }
-  // },
   menu_info: [
     {
       type: Schema.Types.ObjectId,

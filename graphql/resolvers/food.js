@@ -21,32 +21,39 @@ export default {
   Mutation: {
     createFood: async (_, { foodInput }) => {
       try {
-        const newFoods = foodInput.detail.map(item => {
-          return {
-            restaurant: foodInput.restaurant,
-            name: item.name,
-            price: {
-              ...item.price,
-              value: +item.price.value
-            },
-            dish_type: foodInput.dishType
+        const food = await Food.findOne({ name: foodInput.name })
+        if (food) throw new Error('Food already exists')
+        const newFood = new Food({
+          ...foodInput,
+          price: {
+            ...foodInput.price,
+            value: +foodInput.price.value
           }
         })
-        // await newFood.save();
-        const foodsSaved = await Food.create(newFoods);
-        await DishType.findOneAndUpdate({ name: foodInput.dishType }, {
+        await newFood.save();
+        await DishType.findOneAndUpdate({ _id: foodInput.dishType }, {
           $push: {
-            "foods": { $each: foodsSaved }
+            "foods": newFood
           }
         });
-        return foodsSaved.map(item => {
-          return {
-            ...item._doc,
-            _id: item.id
-          }
-        });
+        return {
+          ...newFood._doc,
+          _id: newFood.id,
+        }
       } catch (error) {
         throw error
+      }
+    },
+    updateFood: async (_, { foodId, updateValue }) => {
+      try {
+        const foodHasUpdated = await Food
+          .findByIdAndUpdate(foodId, { $set: { ...updateValue } }, { new: true });
+        return {
+          ...foodHasUpdated._doc,
+          _id: foodHasUpdated.id
+        }
+      } catch (error) {
+        throw error;
       }
     }
   },
@@ -54,8 +61,8 @@ export default {
     restaurant: async ({ restaurant }) => {
       return await Restaurant.findById(restaurant);
     },
-    dish_type: async ({ dish_type }) => {
-      return await DishType.findById(dish_type);
+    dishType: async ({ dishType }) => {
+      return await DishType.findById(dishType);
     }
   }
 }

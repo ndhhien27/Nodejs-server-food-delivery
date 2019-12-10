@@ -29,6 +29,29 @@ const orderSchema = new Schema({
   review: {
     type: Schema.Types.ObjectId,
     ref: 'Order'
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'accepted', 'delivering', 'completed', 'cancelled'],
+    default: 'pending'
+  },
+  subtotal: {
+    type: Number,
+    required: true
+  },
+  total: {
+    type: Number,
+    required: true
+  },
+  payment:{
+    paymentType:{
+      type: String,
+      required:true
+    },
+    detail:{
+      type: String,
+      required:true
+    }
   }
 }, { timestamps: true })
 

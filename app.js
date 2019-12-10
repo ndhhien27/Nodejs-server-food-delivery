@@ -3,6 +3,7 @@ const express = require('express');
 import { urlencoded, json } from 'body-parser';
 import mongoose from 'mongoose';
 import cors from 'cors'
+import verify from './middlewares/verify';
 
 import { ApolloServer } from 'apollo-server-express';
 import schema from './graphql/';
@@ -34,9 +35,9 @@ app.use(json())
 // );
 
 app.use(cors());
+app.use(verify);
 
 server.applyMiddleware({ app, path: '/graphql' });
-
 
 mongoose.connect(process.env.MONGO_URI,
   {

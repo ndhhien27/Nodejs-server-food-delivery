@@ -18,6 +18,38 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  phone: {
+    type: String,
+    required: true
+  },
+  position: [
+    {
+      address: {
+        type: String,
+        required: true
+      },
+      lat: {
+        type: Number,
+        required: true
+      },
+      long: {
+        type: Number,
+        required: true
+      }
+    }
+  ],
+  payment: [
+    {
+      paymentType: {
+        type: String,
+        default: 'cash'
+      },
+      detail: {
+        type: String,
+        default: 'thanh toán khi nhận hàng'
+      }
+    }
+  ],
   orders: [
     {
       type: Schema.Types.ObjectId,
@@ -35,7 +67,11 @@ const userSchema = new Schema({
       type: Schema.Types.ObjectId,
       ref: 'Restaurant'
     }
-  ]
-})
+  ],
+  numNotification: {
+    type: Number,
+    default: 0
+  }
+}, { timestamps: true })
 
 export default mongoose.model('User', userSchema);
