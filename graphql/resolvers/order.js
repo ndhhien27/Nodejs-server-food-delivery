@@ -140,6 +140,25 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    reviewOrder: async (_, { orderId, star, description }) => {
+      try {
+        const order = await Order
+          .findByIdAndUpdate(orderId, {
+            $set: {
+              review: {
+                star, description
+              }
+            }
+          }, { new: true });
+        if (!order) throw new Error('Order does not exist');
+        return {
+          ...order._doc,
+          _id: order.id
+        };
+      } catch (error) {
+        throw error
+      }
     }
   },
   Item: {

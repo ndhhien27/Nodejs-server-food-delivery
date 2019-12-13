@@ -27,8 +27,8 @@ const orderSchema = new Schema({
     ref: 'Restaurant'
   },
   review: {
-    type: Schema.Types.ObjectId,
-    ref: 'Review'
+    star: Number,
+    description: String,
   },
   status: {
     type: String,

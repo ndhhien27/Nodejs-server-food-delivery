@@ -11,6 +11,13 @@ export default `
     total: String!
     subtotal: String!
     payment: Payment!
+    review: Review
+  }
+
+  type Review{
+    _id: ID!
+    star: Int
+    description: String
   }
 
   type Item{
@@ -29,6 +36,7 @@ export default `
   type Mutation{
     createOrder(orderInput: OrderInput!): Order!
     updateOrder(orderId: ID!, status: String!): Order!
+    reviewOrder(orderId: ID!, star: Int!, description: String!): Order!
   }
 
   input ItemInput{
