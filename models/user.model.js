@@ -46,7 +46,7 @@ const userSchema = new Schema({
       },
       detail: {
         type: String,
-        default: 'thanh toán khi nhận hàng'
+        default: 'Payment on delivery'
       }
     }
   ],
@@ -57,12 +57,6 @@ const userSchema = new Schema({
     }
   ],
   bookmarks: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Restaurant'
-    }
-  ],
-  created_restaurants: [
     {
       type: Schema.Types.ObjectId,
       ref: 'Restaurant'

@@ -50,6 +50,17 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    orderById: async (parent, { orderId }) => {
+      try {
+        const order = await Order.findById(orderId);
+        return {
+          ...order._doc,
+          _id: order.id,
+        };
+      } catch (error) {
+        throw error
+      }
     }
   },
   Mutation: {
@@ -65,6 +76,25 @@ export default {
         if (!userOfOrder) throw new Error('User not exist');
         userOfOrder.orders.push(newOrder);
         await userOfOrder.save();
+        const restaurantOfOrder = await Restaurant
+          .findByIdAndUpdate(newOrder.restaurant, { $inc: { numOrders: 1 } });
+        const newNotice = new NotificationOrder({
+          title: `New Order`,
+          order: newOrder,
+          user: userOfOrder,
+          restaurant: restaurantOfOrder,
+        })
+        await newNotice.save();
+        const devices = await Device.find({ merchant: restaurantOfOrder.merchant });
+        for (const el of devices) {
+          let { fcmTokenMerchant } = el;
+          console.log(fcmTokenMerchant);
+          API.sendNotification(
+            { ...newNotice._doc, orderId: newOrder.id },
+            { to: 'rest' },
+            fcmTokenMerchant, res => { },
+            err => { throw err });
+        };
         const foodArr = orderInput.items.map(item => {
           return item.food
         });
@@ -84,18 +114,23 @@ export default {
           { $set: { status } },
           { new: true });
         // const user = User.findById(order.user).populate('device');
-        const receiver = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
+        const user = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
         const newNotice = new NotificationOrder({
           title: `Your order has been ${status}`,
           order,
-          receiver
+          user,
+          restaurant: order.restaurant
         })
         await newNotice.save();
         const devices = await Device.find({ user: order.user });
         for (const el of devices) {
-          let { fcmToken } = el;
-          console.log(fcmToken);
-          API.sendNotification({ ...newNotice._doc, orderId }, fcmToken, res => { },
+          let { fcmTokenUser } = el;
+          console.log(fcmTokenUser);
+          API.sendNotification(
+            { ...newNotice._doc, orderId },
+            { to: 'customer' },
+            fcmTokenUser,
+            res => { },
             err => { throw err });
         }
         return {

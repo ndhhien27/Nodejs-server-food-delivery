@@ -6,9 +6,13 @@ const notificationOrderSchema = new Schema({
     type: String,
     required: true
   },
-  receiver: {
+  user: {
     type: Schema.Types.ObjectId,
     ref: 'User'
+  },
+  restaurant: {
+    type: Schema.Types.ObjectId,
+    ref: 'Restaurant'
   },
   order: {
     type: Schema.Types.ObjectId,

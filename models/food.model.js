@@ -6,16 +6,9 @@ const FoodSchema = new Schema({
     type: String,
     required: true
   },
-  total_order: {
-    type: Number,
-    default: 0
-  },
   is_active: {
     type: Boolean,
     default: false
-  },
-  likes: {
-    type: Number
   },
   img_uri: {
     type: String

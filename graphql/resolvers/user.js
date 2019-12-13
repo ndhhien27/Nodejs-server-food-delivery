@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from '../../models/user.model';
-import Restaurant from '../../models/restaurant.model'
+import Order from '../../models/order.model';
 import Device from '../../models/device.model';
 import jwt from 'jsonwebtoken';
 import userValidate from '../../validate/user';
@@ -70,7 +70,7 @@ export default {
       }
     },
     login: async (_, { loginInput }) => {
-      const { email, password, fcmToken, uniqueId } = loginInput;
+      const { email, password, fcmTokenUser, uniqueId } = loginInput;
       console.log(userValidate.loginValidate({ email, password }).error);
       console.log(email, password);
       const user = await User.findOne({ email });
@@ -82,7 +82,7 @@ export default {
       })
       await Device.findOneAndUpdate(
         { uniqueId },
-        { user, fcmToken },
+        { user, fcmTokenUser },
         { new: true, upsert: true }
       );
       return {
@@ -100,28 +100,10 @@ export default {
         _id: user.id
       }
     },
-    merchantLogin: async (_, { email, password }) => {
-      console.log(userValidate.loginValidate({ email, password }).error);
-      console.log(email, password);
-      const user = await User.findOne({ email });
-      if (!user) throw new Error("User does not exist");
-      const isEqual = await bcrypt.compare(password, user.password);
-      if (!isEqual) throw new Error("Wrong password");
-      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, {
-        expiresIn: 60
-      })
-      return {
-        userId: user.id,
-        fName: user.fName,
-        lName: user.lName,
-        authToken: token,
-        tokenExpiration: 1
-      }
-    },
   },
   User: {
-    createdRestaurants: async ({ _id }) => {
-      return await Restaurant.find({ merchant: _id })
+    orders: async ({ _id }) => {
+      return await Order.find({ user: _id })
     }
   }
 }

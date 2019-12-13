@@ -6,12 +6,10 @@ const restaurantSchema = new Schema({
     type: Boolean,
     default: true
   },
-  cuisines: [
-    {
-      type: String,
-      required: true
-    }
-  ],
+  cuisines: {
+    type: String,
+    required: true
+  },
   name: {
     type: String,
     required: true,
@@ -53,7 +51,11 @@ const restaurantSchema = new Schema({
   bookmarks: {
     type: Number,
     default: 0
-  }
+  },
+  numOrders: {
+    type: Number,
+    default: 0
+  },
 }, { timestamps: true })
 
 restaurantSchema.index({

@@ -1,5 +1,5 @@
 import Restaurant from '../../models/restaurant.model';
-import User from '../../models/user.model';
+import Merchant from '../../models/merchant.model';
 import DishType from '../../models/dishType.model';
 import Food from '../../models/food.model';
 import { mergeArr } from '../../helpers/array';
@@ -116,8 +116,8 @@ export default {
             score: item.avgScore
           }
         });
-        const mergedArr = mergeArr(restaurants,searchByFood);
-        const result2 = mergeArr(mergedArr,searchByDishType);
+        const mergedArr = mergeArr(restaurants, searchByFood);
+        const result2 = mergeArr(mergedArr, searchByDishType);
         // console.log('RESULT',result2);
         // const temp = [
         //   ...searchByNameAndAdress,
@@ -127,7 +127,7 @@ export default {
         // console.log(temp)
         // const result = await Restaurant.find({ _id: { $in: temp } })
         // console.log(result2[0].address)
-        return result2.map(item=>{
+        return result2.map(item => {
           console.log(item.address)
           return {
             ...item
@@ -140,13 +140,14 @@ export default {
   },
   Mutation: {
     createRestaurant: async (_, { restaurantInput }) => {
+      console.log(restaurantInput.merchant);
       try {
         const newRestaurant = new Restaurant({
           ...restaurantInput
         })
-        await User.findOneAndUpdate(
-          { _id: restaurantInput.merchant },
-          { $push: { created_restaurants: newRestaurant } },
+        await Merchant.findByIdAndUpdate(
+          restaurantInput.merchant,
+          { $set: { createdRestaurants: newRestaurant } },
         )
         await newRestaurant.save();
 

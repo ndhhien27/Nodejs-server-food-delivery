@@ -2,8 +2,9 @@ export default `
   type NotificationOrder{
     _id: ID!
     title: String!
-    receiver: ID!
+    user: User!
     order: Order!
+    restaurant: Restaurant!
     createdAt: String!
     hasRead: Boolean!
   }

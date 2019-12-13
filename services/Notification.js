@@ -1,16 +1,18 @@
 import request from './request';
 import axios from 'axios';
-import { FCM_KEY } from './contants';
-axios.defaults.headers.common['Authorization'] = FCM_KEY;
+import { CUST_FCM_KEY, MERC_FCM_KEY } from './contants';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
-const sendNotification = (content, fcmToken, resCb, errCb) => {
-  const { title, orderId, createdAt, hasRead, _id } = content;
+const sendNotification = (content, receiver, fcmToken, resCb, errCb) => {
+  const { title, orderId, createdAt, hasRead, _id, restaurant } = content;
+  const headers = {
+    Authorization: receiver.to === 'rest' ? MERC_FCM_KEY : CUST_FCM_KEY,
+  }
   console.log(orderId);
   const data = {
     to: fcmToken,
     notification: {
-      "body": orderId,
+      "body": `OrderId-${orderId}`,
       title,
       "content_available": true,
       "priority": "high"
@@ -21,6 +23,7 @@ const sendNotification = (content, fcmToken, resCb, errCb) => {
       hasRead,
       _id,
       createdAt,
+      restaurant,
       "content_available": true,
       "priority": "high"
     }
@@ -28,7 +31,8 @@ const sendNotification = (content, fcmToken, resCb, errCb) => {
   return axios({
     url: 'https://fcm.googleapis.com/fcm/send',
     data,
-    method: 'post'
+    method: 'post',
+    headers,
   }).then(resCb).catch(errCb)
 }
 

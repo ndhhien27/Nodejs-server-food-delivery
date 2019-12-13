@@ -23,6 +23,7 @@ export default `
     orders: [Order!]
     ordersByRestaurant(restaurantId: ID!, status: String): [Order!]
     orderByUser(userId: ID!): [Order!]
+    orderById(orderId: ID!): Order!
   }
 
   type Mutation{

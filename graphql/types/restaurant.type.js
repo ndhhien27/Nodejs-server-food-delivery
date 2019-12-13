@@ -1,7 +1,7 @@
 export default `
   type Restaurant{
     _id: ID!
-    cuisines: [String!]!
+    cuisines: String!
     name: String!
     position: Position!
     menu_info: [DishType!]
@@ -32,7 +32,7 @@ export default `
   input RestaurantInput{
     name: String!
     position: PositionInput!
-    cuisines: [String!]!
+    cuisines: String!
     merchant: ID!
   }
 `

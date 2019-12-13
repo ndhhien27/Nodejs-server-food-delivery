@@ -11,14 +11,13 @@ export default `
     likes: [Food!]
     orders: [Order!]
     bookmarks: [Restaurant!]
-    createdRestaurants: [Restaurant!]
     device: [Device!]
     numNotification: Int!
   }
 
   type Device{
     _id: String!
-    fcmToken: String!
+    fcmTokenUser: String!
     user: ID!
     uniqueId: String!
   }
@@ -51,7 +50,6 @@ export default `
     createUser(userInput: UserInput!): User!
     bookmark(restaurantId: ID!, userId: ID!): User!
     login(loginInput: LoginInput!): AuthData!
-    merchantLogin(email: String!, password: String!): AuthData!
     updateUser(userId: ID!, updateValue: UpdateUserInput!): User!
   }
 
@@ -73,7 +71,7 @@ export default `
     email: String!
     password: String!
     uniqueId: String!
-    fcmToken: String!
+    fcmTokenUser: String!
   }
 
   input UserInput{
