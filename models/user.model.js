@@ -6,6 +6,12 @@ const userSchema = new Schema({
     type: String,
     required: true
   },
+  bookmarks: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: 'Restaurant'
+    }
+  ],
   lName: {
     type: String,
     required: true
@@ -38,18 +44,26 @@ const userSchema = new Schema({
       }
     }
   ],
-  payment: [
-    {
-      paymentType: {
-        type: String,
-        default: 'cash'
-      },
-      detail: {
-        type: String,
-        default: 'Payment on delivery'
+  payment: {
+    type: [
+      {
+        paymentType: {
+          type: String,
+          required: true
+        },
+        detail: {
+          type: String,
+          required: true
+        }
       }
-    }
-  ],
+    ],
+    default: [
+      {
+        paymentType: 'cash',
+        detail: 'Payment on delivery'
+      }
+    ]
+  },
   orders: [
     {
       type: Schema.Types.ObjectId,

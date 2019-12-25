@@ -48,6 +48,10 @@ const restaurantSchema = new Schema({
       default: 0
     }
   },
+  img_url:{
+    type: String,
+    default: 'https://res.cloudinary.com/ndhienedu/image/upload/v1576662631/brooke-lark-4J059aGa5s4-unsplash_nqhc4k.jpg'
+  },
   bookmarks: {
     type: Number,
     default: 0

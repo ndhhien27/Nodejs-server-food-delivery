@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from '../../models/user.model';
 import Order from '../../models/order.model';
 import Device from '../../models/device.model';
+import Restaurant from '../../models/restaurant.model';
 import jwt from 'jsonwebtoken';
 import userValidate from '../../validate/user';
 
@@ -15,11 +16,11 @@ export default {
           _id: user.id
         }))
       } catch (err) {
-        console.log(err);
         throw err
       }
     },
-    userById: async (_, { userId }) => {
+    userById: async (_, { userId }, { isAuth }) => {
+      if (!isAuth) throw new Error('Unauthenticated');
       try {
         const user = await User.findById(userId)
         return {
@@ -60,7 +61,7 @@ export default {
             { $push: { bookmarks: restaurantId } },
             { new: true }
           ).populate('bookmarks');
-        // await user.save();
+        const rest = await Restaurant.findByIdAndUpdate(restaurantId, { $inc: { bookmarks: 1 } })
         return {
           ...user._doc,
           _id: user.id
@@ -78,7 +79,7 @@ export default {
       const isEqual = await bcrypt.compare(password, user.password);
       if (!isEqual) throw new Error("Wrong password");
       const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, {
-        expiresIn: 60
+        expiresIn: '2h'
       })
       await Device.findOneAndUpdate(
         { uniqueId },
@@ -90,7 +91,7 @@ export default {
         fName: user.fName,
         lName: user.lName,
         authToken: token,
-        tokenExpiration: 1
+        tokenExpiration: 2
       }
     },
     updateUser: async (_, { userId, updateValue }) => {

@@ -15,11 +15,11 @@ export default {
           _id: merchant.id
         }))
       } catch (err) {
-        console.log(err);
         throw err
       }
     },
-    merchantById: async (_, { merchantId }) => {
+    merchantById: async (_, { merchantId }, { isAuth }) => {
+      if (!isAuth) throw new Error('Unauthenticated');
       try {
         const merchant = await Merchant.findById(merchantId)
         return {
@@ -68,7 +68,7 @@ export default {
       const isEqual = await bcrypt.compare(password, merchant.password);
       if (!isEqual) throw new Error("Wrong password");
       const token = jwt.sign({ merchantId: merchant.id, email: merchant.email }, process.env.SECRET_KEY, {
-        expiresIn: 60
+        expiresIn: '2h'
       })
       await Device.findOneAndUpdate(
         { uniqueId },
@@ -80,7 +80,7 @@ export default {
         fName: merchant._doc.fName,
         lName: merchant._doc.lName,
         authToken: token,
-        tokenExpiration: 1
+        tokenExpiration: 2
       }
     },
   },

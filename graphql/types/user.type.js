@@ -15,14 +15,8 @@ export default `
     numNotification: Int!
   }
 
-  type Device{
-    _id: String!
-    fcmTokenUser: String!
-    user: ID!
-    uniqueId: String!
-  }
-
   type Position{
+    _id: ID!
     address: String!
     lat: Float!
     long: Float!
@@ -34,6 +28,7 @@ export default `
   }
 
   type Payment{
+    _id: ID!
     paymentType: String!
     detail: String!
   }

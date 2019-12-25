@@ -10,7 +10,7 @@ import API from '../../services/Notification';
 export default {
   Query: {
     orders: async (parent, args, { isAuth }, info) => {
-      if (!isAuth) throw new Error('Unauthenticated');
+      // if (!isAuth) throw new Error('Unauthenticated');
       try {
         const orders = await Order.find()
           .populate('items.food')
@@ -81,8 +81,7 @@ export default {
         const newNotice = new NotificationOrder({
           title: `New Order`,
           order: newOrder,
-          user: userOfOrder,
-          restaurant: restaurantOfOrder,
+          receiver: restaurantOfOrder._doc.merchant,
         })
         await newNotice.save();
         const devices = await Device.find({ merchant: restaurantOfOrder.merchant });
@@ -91,8 +90,10 @@ export default {
           console.log(fcmTokenMerchant);
           API.sendNotification(
             { ...newNotice._doc, orderId: newOrder.id },
-            { to: 'rest' },
-            fcmTokenMerchant, res => { },
+            'rest',
+            fcmTokenMerchant,
+            restaurantOfOrder.id,
+            res => console.log(res),
             err => { throw err });
         };
         const foodArr = orderInput.items.map(item => {
@@ -114,12 +115,12 @@ export default {
           { $set: { status } },
           { new: true });
         // const user = User.findById(order.user).populate('device');
+        const restOfOrder = await Restaurant.findById(order.restaurant)
         const user = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
         const newNotice = new NotificationOrder({
           title: `Your order has been ${status}`,
           order,
-          user,
-          restaurant: order.restaurant
+          receiver: user
         })
         await newNotice.save();
         const devices = await Device.find({ user: order.user });
@@ -128,10 +129,24 @@ export default {
           console.log(fcmTokenUser);
           API.sendNotification(
             { ...newNotice._doc, orderId },
-            { to: 'customer' },
+            'customer',
             fcmTokenUser,
             res => { },
             err => { throw err });
+        }
+        if (status === 'cancelled') {
+          const devicesMerchant = await Device.find({ merchant: restOfOrder.merchant });
+          for (const el of devicesMerchant) {
+            let { fcmTokenMerchant } = el;
+            console.log(fcmTokenMerchant);
+            API.sendNotification(
+              { ...newNotice._doc, orderId, title: 'The customer has canceled the order' },
+              'rest',
+              fcmTokenMerchant,
+              restOfOrder.id,
+              res => { },
+              err => { throw err });
+          }
         }
         return {
           ...order._doc,
@@ -152,6 +167,45 @@ export default {
             }
           }, { new: true });
         if (!order) throw new Error('Order does not exist');
+        const rest = await Restaurant.findById(order.restaurant);
+        const oldTotal = rest.rating.avg * rest.rating.total_review;
+        rest.rating.total_review = rest.rating.total_review + 1;
+        rest.rating.avg = +(oldTotal + star) / rest.rating.total_review;
+        await rest.save();
+        console.log(rest);
+        return {
+          ...order._doc,
+          _id: order.id
+        };
+      } catch (error) {
+        throw error
+      }
+    },
+    merchantCancelOrder: async (parent, { orderId }) => {
+      try {
+        const order = await Order.findByIdAndUpdate(orderId,
+          { $set: { status: 'cancelled' } },
+          { new: true });
+        // const user = User.findById(order.user).populate('device');
+        const restOfOrder = await Restaurant.findById(order.restaurant)
+        const user = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
+        const newNotice = new NotificationOrder({
+          title: `Your order has been cancelled`,
+          order,
+          receiver: user
+        })
+        await newNotice.save();
+        const devices = await Device.find({ user: order.user });
+        for (const el of devices) {
+          let { fcmTokenUser } = el;
+          console.log(fcmTokenUser);
+          API.sendNotification(
+            { ...newNotice._doc, orderId },
+            'customer',
+            fcmTokenUser,
+            res => { },
+            err => { throw err });
+        }
         return {
           ...order._doc,
           _id: order.id

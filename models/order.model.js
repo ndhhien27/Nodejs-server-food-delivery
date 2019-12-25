@@ -18,9 +18,19 @@ const orderSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User'
   },
-  delivery_address: {
-    type: String,
-    required: true
+  delivery_position: {
+    address: {
+      type: String,
+      require: true,
+    },
+    lat: {
+      type: Number,
+      required: true
+    },
+    long:{
+      type: Number,
+      required: true
+    }
   },
   restaurant: {
     type: Schema.Types.ObjectId,

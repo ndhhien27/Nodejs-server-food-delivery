@@ -2,9 +2,8 @@ export default `
   type NotificationOrder{
     _id: ID!
     title: String!
-    user: User!
+    receiver: ID!
     order: Order!
-    restaurant: Restaurant!
     createdAt: String!
     hasRead: Boolean!
   }
@@ -16,6 +15,7 @@ export default `
 
   type Mutation{
     markAsRead(notificationId: ID!): NotificationOrder!
+    deleteNoti(notificationId: ID!): NotificationOrder!
   }
 
   `

@@ -10,7 +10,7 @@ export default {
       try {
         const user = await User.findById(userId);
         if (!user) throw new Error('User do not exist');
-        const notifications = await NotificationOrder.find({ user: userId }).sort({ createdAt: -1 })
+        const notifications = await NotificationOrder.find({ receiver: userId }).sort({ createdAt: -1 })
         return notifications.map(item => {
           return {
             ...item._doc,
@@ -51,10 +51,21 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    deleteNoti: async (_, { notificationId }) => {
+      try {
+        const noticeHasDelete = await NotificationOrder.findByIdAndDelete(notificationId)
+        return {
+          ...noticeHasDelete._doc,
+          _id: noticeHasDelete.id,
+        }
+      } catch (error) {
+        throw error
+      }
     }
   },
   NotificationOrder: {
-    order: async ({order}) => {
+    order: async ({ order }) => {
       try {
         return await Order.findById(order);
       } catch (error) {

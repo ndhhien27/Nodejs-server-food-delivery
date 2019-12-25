@@ -22,7 +22,7 @@ export default {
     createFood: async (_, { foodInput }) => {
       try {
         const food = await Food.findOne({ name: foodInput.name })
-        if (food) throw new Error('Food already exists')
+        if (food) throw new Error(`'${foodInput.name}' already exists`)
         const newFood = new Food({
           ...foodInput,
           price: {

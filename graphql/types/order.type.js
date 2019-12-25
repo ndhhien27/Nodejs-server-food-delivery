@@ -3,7 +3,7 @@ export default `
     _id: ID!
     user: User!
     items: [Item!]!
-    delivery_address: String!
+    delivery_position: Position!
     restaurant: Restaurant!
     createdAt: String!
     updatedAt: String!
@@ -12,12 +12,6 @@ export default `
     subtotal: String!
     payment: Payment!
     review: Review
-  }
-
-  type Review{
-    _id: ID!
-    star: Int
-    description: String
   }
 
   type Item{
@@ -37,6 +31,7 @@ export default `
     createOrder(orderInput: OrderInput!): Order!
     updateOrder(orderId: ID!, status: String!): Order!
     reviewOrder(orderId: ID!, star: Int!, description: String!): Order!
+    merchantCancelOrder(orderId: ID!): Order!
   }
 
   input ItemInput{
@@ -51,7 +46,7 @@ export default `
 
   input OrderInput{
     restaurant: ID!
-    delivery_address: String!
+    delivery_position: PositionInput!
     user: ID!
     items:[ItemInput!]!
     subtotal: Float!
