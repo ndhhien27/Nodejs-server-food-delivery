@@ -180,7 +180,7 @@ export default {
   Mutation: {
     createRestaurant: async (_, { restaurantInput }) => {
       try {
-        const existRest = await Restaurant.find({ name: restaurantInput.name })
+        const existRest = await Restaurant.findOne({ name: restaurantInput.name })
         if (existRest) throw new Error('Restaurant already exist')
         const newRestaurant = new Restaurant({
           ...restaurantInput
