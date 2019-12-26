@@ -48,7 +48,7 @@ const restaurantSchema = new Schema({
       default: 0
     }
   },
-  img_url:{
+  img_url: {
     type: String,
     default: 'https://res.cloudinary.com/ndhienedu/image/upload/v1576662631/brooke-lark-4J059aGa5s4-unsplash_nqhc4k.jpg'
   },
@@ -62,9 +62,19 @@ const restaurantSchema = new Schema({
   },
 }, { timestamps: true })
 
-restaurantSchema.index({
-  address: 'text',
-  name: 'text'
-});
+restaurantSchema.index(
+  {
+    'name': 'text',
+    'position.address': 'text'
+  },
+  {
+    weights:
+    {
+      name: 10,
+      'position.address': 5
+    },
+    name: "restaurant"
+  }
+)
 
 export default mongoose.model('Restaurant', restaurantSchema)
