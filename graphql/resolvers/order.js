@@ -116,6 +116,7 @@ export default {
         // const order = await Order.findByIdAndUpdate(orderId,
         //   { $set: { status } },
         //   { new: true });
+        if (beforeStatus !== 'pending' && status === 'cancelled') throw new Error('Update failed');
         beforeOrder.status = status;
         const order = await beforeOrder.save();
         // const user = User.findById(order.user).populate('device');
@@ -139,7 +140,6 @@ export default {
             err => { throw err });
         }
         if (status === 'cancelled') {
-          if (beforeStatus !== 'pending') throw new Error('Update failed');
           const devicesMerchant = await Device.find({ merchant: restOfOrder.merchant });
           for (const el of devicesMerchant) {
             let { fcmTokenMerchant } = el;
