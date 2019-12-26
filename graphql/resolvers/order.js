@@ -111,9 +111,13 @@ export default {
     },
     updateOrder: async (_, { orderId, status }) => {
       try {
-        const order = await Order.findByIdAndUpdate(orderId,
-          { $set: { status } },
-          { new: true });
+        const beforeOrder = await Order.findById(orderId);
+        const beforeStatus = beforeOrder.status;
+        // const order = await Order.findByIdAndUpdate(orderId,
+        //   { $set: { status } },
+        //   { new: true });
+        beforeOrder.status = status;
+        const order = await beforeOrder.save();
         // const user = User.findById(order.user).populate('device');
         const restOfOrder = await Restaurant.findById(order.restaurant)
         const user = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
@@ -135,6 +139,7 @@ export default {
             err => { throw err });
         }
         if (status === 'cancelled') {
+          if (beforeStatus !== 'pending') throw new Error('Update failed');
           const devicesMerchant = await Device.find({ merchant: restOfOrder.merchant });
           for (const el of devicesMerchant) {
             let { fcmTokenMerchant } = el;
@@ -183,9 +188,17 @@ export default {
     },
     merchantCancelOrder: async (parent, { orderId }) => {
       try {
-        const order = await Order.findByIdAndUpdate(orderId,
-          { $set: { status: 'cancelled' } },
-          { new: true });
+        const beforeOrder = await Order.findById(orderId);
+        const beforeStatus = beforeOrder.status;
+        if (beforeStatus !== 'pending') throw new Error('Update failed');
+        // const order = await Order.findByIdAndUpdate(orderId,
+        //   { $set: { status } },
+        //   { new: true });
+        beforeOrder.status = 'cancelled';
+        const order = await beforeOrder.save();
+        // const order = await Order.findByIdAndUpdate(orderId,
+        //   { $set: { status: 'cancelled' } },
+        //   { new: true });
         // const user = User.findById(order.user).populate('device');
         const restOfOrder = await Restaurant.findById(order.restaurant)
         const user = await User.findByIdAndUpdate(order.user, { $inc: { numNotification: 1 } });
