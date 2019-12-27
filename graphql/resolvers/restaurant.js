@@ -181,7 +181,7 @@ export default {
     createRestaurant: async (_, { restaurantInput }) => {
       try {
         const existRest = await Restaurant.findOne({ name: restaurantInput.name })
-        if (existRest) throw new Error('Restaurant already exist')
+        if (existRest) throw new Error('Restaurant already exists')
         const newRestaurant = new Restaurant({
           ...restaurantInput
         })

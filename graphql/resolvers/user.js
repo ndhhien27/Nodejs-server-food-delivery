@@ -36,7 +36,7 @@ export default {
     createUser: async (_, { userInput }) => {
       try {
         const userExist = await User.findOne({ email: userInput.email });
-        if (userExist) throw new Error('User exists already');
+        if (userExist) throw new Error('User already exists');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(userInput.password, salt);
         const newUser = new User({

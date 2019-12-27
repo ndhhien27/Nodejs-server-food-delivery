@@ -19,7 +19,7 @@ export default {
       try {
         const restaurant = await Restaurant.findById(dishTypeInput.restaurant);
         if (!restaurant) throw new Error('Restaurant does not exist');
-        const dishType = await DishType.findOne({ name: dishTypeInput.name });
+        const dishType = await DishType.findOne({ name: dishTypeInput.name, restaurant:dishTypeInput.restaurant });
         if (dishType) throw new Error(`'${dishTypeInput.name}' already exists`);
         const newDishType = new DishType({
           name: dishTypeInput.name,

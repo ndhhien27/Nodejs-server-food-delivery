@@ -21,7 +21,7 @@ export default {
   Mutation: {
     createFood: async (_, { foodInput }) => {
       try {
-        const food = await Food.findOne({ name: foodInput.name })
+        const food = await Food.findOne({ name: foodInput.name, restaurant: foodInput.restaurant })
         if (food) throw new Error(`'${foodInput.name}' already exists`)
         const newFood = new Food({
           ...foodInput,

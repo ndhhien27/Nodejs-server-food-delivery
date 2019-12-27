@@ -35,7 +35,7 @@ export default {
     createMerchant: async (_, { merchantInput }) => {
       try {
         const merchantExist = await Merchant.findOne({ email: merchantInput.email });
-        if (merchantExist) throw new Error('Merchant exists already');
+        if (merchantExist) throw new Error('Email already exists');
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(merchantInput.password, salt);
         const newMerchant = new Merchant({
@@ -64,7 +64,7 @@ export default {
       console.log(userValidate.loginValidate({ email, password }).error);
       console.log(email, password);
       const merchant = await Merchant.findOne({ email });
-      if (!merchant) throw new Error("Merchant does not exist");
+      if (!merchant) throw new Error("Email does not exist");
       const isEqual = await bcrypt.compare(password, merchant.password);
       if (!isEqual) throw new Error("Wrong password");
       const token = jwt.sign({ merchantId: merchant.id, email: merchant.email }, process.env.SECRET_KEY, {
