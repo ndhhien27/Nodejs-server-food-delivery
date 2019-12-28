@@ -26,6 +26,7 @@ export default `
     restaurantById(restaurantId: ID!): Restaurant!
     searchRestaurant(query: String!): [Restaurant!]
     nearestRestaurants(userLocation: LocationInput!): [Restaurant!]
+    restaurantByRating(userLocation: LocationInput!, limit: Int): [Restaurant!]!
   }
 
   type Mutation{

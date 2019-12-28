@@ -173,6 +173,29 @@ export default {
       } catch (error) {
         throw error
       }
+    },
+    restaurantByRating: async (_, { userLocation, limit = 999999999 }) => {
+      const { lat, long } = userLocation;
+      try {
+        const rests = await Restaurant.aggregate([
+          { $sort: { "rating.avg": -1 } },
+          { $limit: limit }
+        ])
+        console.log(rests);
+        return rests.map(el => {
+          return {
+            ...el,
+            distance: getDistanceFromLatLonInKm(
+              lat,
+              long,
+              el.position.lat,
+              el.position.long
+            ),
+          }
+        })
+      } catch (error) {
+        throw error
+      }
     }
   },
   Mutation: {
