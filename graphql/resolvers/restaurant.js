@@ -87,7 +87,6 @@ export default {
             $group:
             {
               _id: "$restaurants",
-              itemsSold: { $addToSet: "$_id" },
               avgScore: { $avg: "$score" }
             }
           },
@@ -124,7 +123,6 @@ export default {
             $group:
             {
               _id: "$restaurants",
-              itemsSold: { $addToSet: "$_id" },
               avgScore: { $avg: "$score" }
             }
           },
@@ -136,8 +134,8 @@ export default {
             score: item.avgScore
           }
         });
-        const mergedArr = mergeArr(restaurants, searchByFood);
-        const result2 = mergeArr(mergedArr, searchByDishType);
+        const mergedArr = mergeArr(restaurants, searchByDishType);
+        const result2 = mergeArr(mergedArr, searchByFood);
         // console.log('RESULT',result2);
         // const temp = [
         //   ...searchByNameAndAdress,
